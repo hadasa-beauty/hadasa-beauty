@@ -9,7 +9,6 @@
 <meta property="og:title" content="הדסה איפור ותסרוקות ערב">
 <meta property="og:description" content="תסרוקות ערב ואיפור לנשים ולנערות">
 <meta property="og:type" content="website">
-<meta property="og:image" content="https://hadasa-beauty.github.io/images/5qiqs2luag-t.jpg">
 <!--/og-->
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%92%84%3C/text%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -484,6 +483,22 @@ html.reveal-on[data-skin="motion"] .grid .card.in{opacity:1;transform:none}
 @keyframes mvlb{from{opacity:0;transform:scale(.98)}to{opacity:1;transform:none}}
 @media (prefers-reduced-motion:reduce){.mv-track{animation:none;flex-wrap:wrap;width:auto;padding-inline:20px}.mv-chip[aria-hidden="true"]{display:none}}
 html.a11y-still .mv-track{flex-wrap:wrap;width:auto;padding-inline:20px}html.a11y-still .mv-chip[aria-hidden="true"]{display:none}
+
+/* ===== work numbers & price list ===== */
+.lb-no{display:inline-block;margin-inline-start:10px;padding:1px 9px;border-radius:999px;background:var(--blush);color:var(--ink);font-size:13px;font-weight:600}
+.lb-hint{font-size:13px!important;margin:0!important}
+.row-no{color:var(--muted);font-weight:400;font-size:13px}
+.docpage.prices{width:min(900px,100%)}
+.price-page{margin:0 0 18px}
+.price-page img{width:100%;height:auto;border-radius:12px;border:1px solid var(--line);background:#fff}
+.price-open{display:inline-block;margin-top:6px;font-size:14px}
+.price-text{border:1px solid var(--line);border-radius:12px;padding:10px 14px;background:var(--surface)}
+.price-text summary{cursor:pointer;font-weight:600}
+.price-text p{white-space:pre-line;margin:10px 0 0}
+.cta svg{flex:none}
+button.cta{border:0;cursor:pointer;font:inherit;font-weight:600}
+button.cta.ghost{background:transparent}
+button.ct-act{font:inherit;font-size:14px;font-weight:600;cursor:pointer}
 </style>
 </head>
 <body>
@@ -499,7 +514,7 @@ function esc(s){ return String(s == null ? '' : s).replace(/[&<>"']/g, function(
 
 var DEFAULTS = {
   v:2,
-  site:{ name:'שם הסטודיו', tagline:'תסרוקות ערב ואיפור לנשים ולנערות', about:'', phone:'', instagram:'', waMessage:'היי, הגעתי מהגלריה ואשמח לשמוע פרטים', logo:'', cover:'', showName:'yes', a11yName:'', a11yPhone:'', a11yEmail:'', a11yDate:'' },
+  site:{ name:'שם הסטודיו', tagline:'תסרוקות ערב ואיפור לנשים ולנערות', about:'', phone:'', instagram:'', waMessage:'היי, הגעתי מהגלריה ואשמח לשמוע פרטים', logo:'', cover:'', priceText:'', showName:'yes', a11yName:'', a11yPhone:'', a11yEmail:'', a11yDate:'' },
   categories:[{id:'c1',name:'כלות'},{id:'c2',name:'ערב ואירועים'},{id:'c3',name:'בת מצווה'}],
   works:[]
 };
@@ -652,12 +667,23 @@ function privacyPolicy(){
     (ph ? '<h3>יצירת קשר</h3><p>בכל שאלה בנושא פרטיות אפשר לפנות לטלפון <a href="tel:'+ph.replace(/[^\d+]/g,'')+'">'+ph+'</a>.</p>' : '');
 }
 var doc = {open:null, ret:null};
+function priceList(){
+  var s = draft.site, wa = waLink('היי, ראיתי את המחירון בגלריה ויש לי שאלה:');
+  return '<h2>מחירון</h2>' +
+    (draft.prices.length ? draft.prices.map(function(p, i){
+      return '<figure class="price-page"><img src="'+esc(src(p))+'" alt="'+esc('מחירון' + (draft.prices.length > 1 ? ', עמוד ' + (i+1) : '') + (s.priceText ? '. הנוסח המלא מופיע בגרסת הטקסט שמתחת.' : ''))+'">' +
+        (isData(p) ? '' : '<a class="price-open" href="'+esc(p)+'" target="_blank" rel="noopener">פתיחה בגודל מלא</a>') + '</figure>';
+    }).join('') : '<p>המחירון יעלה לכאן בקרוב.</p>') +
+    (s.priceText ? '<details class="price-text"><summary>גרסת טקסט של המחירון</summary><p>'+esc(s.priceText)+'</p></details>' : '') +
+    (wa ? '<a class="cta" href="'+esc(wa)+'" target="_blank" rel="noopener" style="margin-top:14px">'+ICON_CHAT+'שאלה על המחירים בוואטסאפ</a>' : '');
+}
 function renderDoc(){
   var box = document.getElementById('docbox');
   if (!doc.open){ box.innerHTML = ''; box.hidden = true; if (!lb.open && !ed.open) document.body.style.overflow = ''; if (doc.ret && document.body.contains(doc.ret)) doc.ret.focus(); return; }
   box.hidden = false; document.body.style.overflow = 'hidden';
-  box.innerHTML = '<div class="ed-back" data-act="doc-close"></div><div class="docpage" role="dialog" aria-modal="true" aria-label="'+(doc.open==='a11y'?'הצהרת נגישות':'מדיניות פרטיות')+'">' +
-    '<button class="ed-x doc-x" data-act="doc-close" aria-label="סגירה">×</button>' + (doc.open === 'a11y' ? a11yStatement() : privacyPolicy()) + '</div>';
+  var label = {a11y:'הצהרת נגישות', privacy:'מדיניות פרטיות', prices:'מחירון'}[doc.open];
+  box.innerHTML = '<div class="ed-back" data-act="doc-close"></div><div class="docpage'+(doc.open==='prices'?' prices':'')+'" role="dialog" aria-modal="true" aria-label="'+label+'">' +
+    '<button class="ed-x doc-x" data-act="doc-close" aria-label="סגירה">×</button>' + (doc.open === 'a11y' ? a11yStatement() : doc.open === 'prices' ? priceList() : privacyPolicy()) + '</div>';
   box.querySelector('.doc-x').focus();
 }
 var a11yOpen = false;
@@ -681,16 +707,33 @@ function trapFocus(e){
 function normImg(i){ return typeof i === 'string' ? {full:i, thumb:i} : (i && i.full ? {full:i.full, thumb:i.thumb || i.full} : null); }
 function normalize(d){
   var o = clone(DEFAULTS);
-  o.theme = normTheme(d && d.theme);
+  o.theme = normTheme(d && d.theme); o.prices = []; o.pages = [];
   if (!d || !d.site) return o;
   for (var k in o.site) if (typeof d.site[k] === 'string') o.site[k] = d.site[k];
   if (Array.isArray(d.categories)) o.categories = d.categories.filter(function(c){return c && c.id;});
   o.works = Array.isArray(d.works) ? d.works.filter(function(w){return w && w.id;}).map(function(w){
     return { id:w.id, title:w.title||'', cat:w.cat||'', type:TYPE_LABEL[w.type]?w.type:'hair',
       tags:Array.isArray(w.tags)?w.tags:[], desc:w.desc||'', images:(Array.isArray(w.images)?w.images:[]).map(normImg).filter(Boolean),
-      visible:w.visible!==false, featured:!!w.featured, review:!!w.review };
+      visible:w.visible!==false, featured:!!w.featured, review:!!w.review, no:+w.no || 0 };
   }) : [];
+  o.prices = Array.isArray(d.prices) ? d.prices.filter(function(x){ return typeof x === 'string' && x; }) : [];
+  o.pages = Array.isArray(d.pages) ? d.pages.filter(function(x){ return typeof x === 'string'; }) : [];
+  ensureNumbers(o.works);
   return o;
+}
+function ensureNumbers(works){
+  var max = works.reduce(function(m, w){ return Math.max(m, w.no || 0); }, 0);
+  for (var i = works.length - 1; i >= 0; i--) if (!works[i].no) works[i].no = ++max;
+}
+function workNo(w){ return w.no ? 'עבודה מס׳ ' + w.no : ''; }
+function workLink(w, img){
+  var base = siteBase(), n = (img || 0) + 1;
+  return saved.pages.indexOf(w.id) !== -1 ? base + 'w/' + w.id + '-' + n + '.html' : base + '#w=' + w.id + '&i=' + n;
+}
+function askText(w, img){
+  return 'היי, אשמח לפרטים על העבודה הזו מהגלריה:\n' +
+    [workNo(w), catName(w.cat), w.title || TYPE_LABEL[w.type]].filter(Boolean).join(' · ') +
+    (w.images.length > 1 ? ' (תמונה ' + ((img||0)+1) + ' מתוך ' + w.images.length + ')' : '') + '\n' + workLink(w, img);
 }
 
 var saved = normalize(null), draft = normalize(null), dirty = false, loaded = false;
@@ -751,6 +794,7 @@ function loadFromGitHub(){
     gh.dataText = text;
     var d = null; try { d = text ? JSON.parse(text) : null; } catch(e){}
     saved = normalize(d); draft = clone(saved); dirty = false; canEdit = true; loaded = true;
+    if (draft.works.some(function(w){ return w.visible && w.images.length && draft.pages.indexOf(w.id) === -1; })) dirty = true;
     saveCfg(cfg);
   });
 }
@@ -855,7 +899,7 @@ function heroHTML(skin, s, vis, wa){
   var title = (!s.logo || s.showName ? '<h1>'+esc(s.name)+'</h1>' : '<h1 class="sr">'+esc(s.name)+'</h1>');
   var tag = s.tagline ? '<p class="tagline">'+esc(s.tagline)+'</p>' : '', about = s.about ? '<p class="about">'+esc(s.about)+'</p>' : '';
   var ctas = '<div class="ctas">' + (wa ? '<a class="cta" href="'+esc(wa)+'" target="_blank" rel="noopener">'+ICON_CHAT+'לתיאום מועד בוואטסאפ</a>' : '') +
-    (vis.length ? '<a class="cta ghost" href="#works">לכל העבודות</a>' : '') + '</div>';
+    (draft.prices.length ? '<button class="cta ghost" data-act="show-prices">'+ICON_PRICE+'מחירון</button>' : vis.length ? '<a class="cta ghost" href="#works">לכל העבודות</a>' : '') + '</div>';
   function shot(w, cls, full, inner){
     if (!w) return '<div class="'+cls+' empty" aria-hidden="true">'+(inner||'')+'<div class="ph-fill"></div></div>';
     return '<button class="'+cls+'" data-open="'+w.id+'" aria-label="'+esc(altText(w))+'">'+(inner||'')+'<img src="'+esc(src(full ? w.images[0].full : w.images[0].thumb))+'" alt=""></button>';
@@ -906,6 +950,7 @@ function heroHTML(skin, s, vis, wa){
       '<div class="ct-actions">' + (wa ? '<a class="ct-act" href="'+esc(wa)+'" target="_blank" rel="noopener">'+ICON_CHAT+'<span>הודעה</span></a>' : '') +
         (s.phone ? '<a class="ct-act" href="tel:'+esc(s.phone.replace(/[^\d+]/g,''))+'"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2"/></svg><span>חיוג</span></a>' : '') +
         (s.instagram ? '<a class="ct-act" href="'+esc(s.instagram)+'" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor"/></svg><span>אינסטגרם</span></a>' : '') +
+        (draft.prices.length ? '<button class="ct-act" data-act="show-prices">'+ICON_PRICE+'<span>מחירון</span></button>' : '') +
         (vis.length ? '<a class="ct-act" href="#works"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg><span>קטלוג</span></a>' : '') +
       '</div></header>';
   }
@@ -920,6 +965,7 @@ function heroHTML(skin, s, vis, wa){
 function altText(w){ return [w.title || TYPE_LABEL[w.type], catName(w.cat)].filter(Boolean).join(', '); }
 function plural(n){ return n === 1 ? 'עבודה אחת' : n + ' עבודות'; }
 var ICON_CHAT = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 11.5a8 8 0 0 1-11.6 7.1L4 20l1.4-4.2A8 8 0 1 1 20 11.5z"/></svg>';
+var ICON_PRICE = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.6 13.4 13.4 20.6a2 2 0 0 1-2.8 0L3 13V3h10l7.6 7.6a2 2 0 0 1 0 2.8z"/><circle cx="7.5" cy="7.5" r="1.5"/></svg>';
 var ICON_SEARCH = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>';
 function toast(msg, ms){ var t = document.getElementById('toast'); t.textContent = msg; t.classList.add('on'); clearTimeout(toast._t); toast._t = setTimeout(function(){ t.classList.remove('on'); }, ms || 3600); }
 function showBusy(msg){ var d = document.createElement('div'); d.className = 'busy'; d.textContent = msg; document.body.appendChild(d); return d; }
@@ -948,7 +994,7 @@ function render(){
       '<p class="count" id="count" aria-live="polite"></p><div class="grid" id="grid"></div></section></main>' +
     '<footer class="foot"><div>' + (s.logo ? '<img class="foot-logo" src="'+esc(src(s.logo))+'" alt="">' : '') + '<strong>'+esc(s.name)+'</strong><div>'+esc(s.tagline)+'</div></div>' +
       '<div>' + (s.phone ? '<div>'+esc(s.phone)+'</div>' : '') + (s.instagram ? '<a href="'+esc(s.instagram)+'" target="_blank" rel="noopener">אינסטגרם</a>' : '') + '</div>' +
-      '<div class="legal"><button class="linkbtn" data-act="show-a11y">הצהרת נגישות</button><button class="linkbtn" data-act="show-privacy">מדיניות פרטיות</button></div></footer></div>' +
+      '<div class="legal">' + (draft.prices.length ? '<button class="linkbtn" data-act="show-prices">מחירון</button>' : '') + '<button class="linkbtn" data-act="show-a11y">הצהרת נגישות</button><button class="linkbtn" data-act="show-privacy">מדיניות פרטיות</button></div></footer></div>' +
   '<button class="a11y-btn" data-act="a11y-open" aria-label="הגדרות נגישות" aria-expanded="false"><svg viewBox="0 0 24 24" aria-hidden="true" fill="currentColor"><path d="M12 2a2 2 0 1 1 0 4 2 2 0 0 1 0-4zm9 7h-6v13h-2v-6h-2v6H9V9H3V7h18v2z"/></svg></button>' +
   (wa ? '<a class="wa-float" href="'+esc(wa)+'" target="_blank" rel="noopener" aria-label="שליחת הודעה בוואטסאפ">'+ICON_CHAT+'</a>' : '');
   renderGrid(); renderOwnerChrome();
@@ -1042,7 +1088,7 @@ function renderCatalog(grid, list, vis, count){
   count.textContent = plural(list.length);
   grid.innerHTML = '<div class="ct-head"><button class="ct-back" data-act="col-back" aria-label="חזרה לכל הקטגוריות"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button><h3>'+esc(head)+'</h3></div>' +
     '<ul class="ct-list" role="list">' + list.map(function(w){
-      var wa = waLink('היי, ראיתי בגלריה את „' + (w.title || TYPE_LABEL[w.type]) + '” ואשמח לפרטים');
+      var wa = waLink(askText(w, 0));
       return '<li class="ct-item"><button class="ct-row" data-open="'+w.id+'"><span class="ct-thumb"><img src="'+esc(src(w.images[0].thumb))+'" alt="'+esc(altText(w))+'" loading="lazy">' +
           (w.images.length > 1 ? '<em>'+w.images.length+'</em>' : '') + '</span>' +
         '<span class="ct-txt"><strong>'+esc(w.title || TYPE_LABEL[w.type])+'</strong><span>'+esc([TYPE_LABEL[w.type]].concat(w.tags.slice(0,3)).join(' · '))+'</span></span></button>' +
@@ -1059,15 +1105,17 @@ function renderLB(){
   var box = document.getElementById('lightbox');
   if (!lb.open){ box.innerHTML = ''; box.hidden = true; if (!ed.open) document.body.style.overflow = ''; return; }
   var w = curWork(); if (!w){ lb.open = false; return renderLB(); }
-  var n = w.images.length, wa = waLink('היי, ראיתי בגלריה את „' + (w.title || TYPE_LABEL[w.type]) + '” ואשמח לפרטים');
+  var n = w.images.length, wa = waLink(askText(w, lb.img));
   box.hidden = false; document.body.style.overflow = 'hidden';
   box.innerHTML = '<div class="lb" role="dialog" aria-modal="true" aria-label="'+esc(w.title||'עבודה')+'"><div class="lb-stage" id="lbstage"><button class="lb-close" data-act="lb-close" aria-label="סגירה">×</button>' +
       '<img src="'+esc(src(w.images[lb.img].full))+'" alt="'+esc(altText(w) + (n > 1 ? ', תמונה ' + (lb.img+1) + ' מתוך ' + n : ''))+'">' +
       (n > 1 ? '<button class="lb-arrow prev" data-act="img-prev" aria-label="התמונה הקודמת">›</button><button class="lb-arrow next" data-act="img-next" aria-label="התמונה הבאה">‹</button><div class="dots">' + w.images.map(function(_,i){return '<span class="'+(i===lb.img?'on':'')+'"></span>';}).join('') + '</div>' : '') +
-    '</div><div class="lb-info"><div class="meta">'+esc([catName(w.cat), TYPE_LABEL[w.type]].filter(Boolean).join(' / '))+'</div>' +
+    '</div><div class="lb-info"><div class="meta">'+esc([catName(w.cat), TYPE_LABEL[w.type]].filter(Boolean).join(' / '))+(w.no ? '<span class="lb-no">'+esc(workNo(w))+'</span>' : '')+'</div>' +
       '<h2>'+esc(w.title || TYPE_LABEL[w.type])+'</h2>' + (w.desc ? '<p>'+esc(w.desc)+'</p>' : '') +
       (w.tags.length ? '<div class="tags">' + w.tags.map(function(t){return '<button class="tag" data-tag="'+esc(t)+'">'+esc(t)+'</button>';}).join('') + '</div>' : '') +
-      (wa ? '<a class="cta" style="align-self:flex-start;margin-top:6px" href="'+esc(wa)+'" target="_blank" rel="noopener">'+ICON_CHAT+'אהבת? שלחי הודעה על הלוק הזה</a>' : '') +
+      (wa ? '<a class="cta" style="align-self:flex-start;margin-top:6px" href="'+esc(wa)+'" target="_blank" rel="noopener">'+ICON_CHAT+'אהבת? שלחי הודעה על הלוק הזה</a>' +
+        '<p class="lb-hint">ההודעה תכלול את מספר העבודה וקישור לתמונה הזו.</p>' : '') +
+      (draft.prices.length ? '<button class="linkbtn" data-act="show-prices" style="align-self:flex-start">לצפייה במחירון</button>' : '') +
       (lb.list.length > 1 ? '<div class="lb-nav"><button data-act="work-prev">› העבודה הקודמת</button><span style="color:var(--muted);font-size:14px;align-self:center">'+(lb.i+1)+' מתוך '+lb.list.length+'</span><button data-act="work-next">העבודה הבאה ‹</button></div>' : '') +
     '</div></div>';
   box.querySelector('.lb-close').focus();
@@ -1084,7 +1132,7 @@ function renderOwnerChrome(){
   document.getElementById('admin-pill').hidden = !canEdit || ed.open;
   document.getElementById('draft-bar').hidden = !canEdit || !dirty;
 }
-function markDirty(){ dirty = true; render(); if (ed.open) renderEditor(); }
+function markDirty(){ ensureNumbers(draft.works); dirty = true; render(); if (ed.open) renderEditor(); }
 
 /* ---------- login ---------- */
 function openLogin(){ ed.open = true; ed.login = true; renderEditor(); }
@@ -1131,7 +1179,7 @@ function worksTab(){
   var rows = draft.works.map(function(w, i){
     if (ed.reviewOnly && !w.review) return '';
     return '<li class="row'+(w.visible?'':' off')+'">' + (w.images[0] ? '<img src="'+esc(src(w.images[0].thumb))+'" alt="">' : '<div class="noimg"></div>') +
-      '<div><div class="t">'+esc(w.title || TYPE_LABEL[w.type])+(w.review ? ' <span class="ai-badge">זוהה אוטומטית</span>' : '')+'</div><div class="s">'+esc([catName(w.cat)||'ללא קטגוריה', TYPE_LABEL[w.type], w.images.length+' תמונות'].join(' / '))+'</div></div><div class="acts">' +
+      '<div><div class="t">'+(w.no ? '<span class="row-no">#'+w.no+'</span> ' : '')+esc(w.title || TYPE_LABEL[w.type])+(w.review ? ' <span class="ai-badge">זוהה אוטומטית</span>' : '')+'</div><div class="s">'+esc([catName(w.cat)||'ללא קטגוריה', TYPE_LABEL[w.type], w.images.length+' תמונות'].join(' / '))+'</div></div><div class="acts">' +
         (w.review ? '<button class="ic" data-act="w-ok" data-id="'+w.id+'" style="border-color:var(--accent);color:var(--accent)">אישור</button>' : '') +
         '<button class="ic" data-act="w-vis" data-id="'+w.id+'" aria-pressed="'+w.visible+'">'+(w.visible?'מוצגת':'מוסתרת')+'</button>' +
         '<button class="ic" data-act="w-feat" data-id="'+w.id+'" aria-pressed="'+w.featured+'">'+(w.featured?'★ בראש העמוד':'☆ לראש העמוד')+'</button>' +
@@ -1209,6 +1257,12 @@ function siteTab(){
   return '<div class="field"><span class="lbl">לוגו</span><div class="logo-edit"><div class="prev">' + (s.logo ? '<img src="'+esc(src(s.logo))+'" alt="הלוגו הנוכחי">' : 'אין לוגו') + '</div>' +
       '<label class="btn sec" style="cursor:pointer">'+(s.logo?'החלפת הלוגו':'העלאת לוגו')+'<input type="file" accept="image/*" id="logofile" style="display:none"></label>' + (s.logo ? '<button class="ic" data-act="logo-del">הסרה</button>' : '') + '</div>' +
       '<span class="hint" style="margin:0">מומלץ קובץ PNG עם רקע שקוף.</span></div>' +
+    '<div class="field"><span class="lbl">מחירון</span><div class="thumbs">' + draft.prices.map(function(p, i){
+        return '<div class="thumb"><img src="'+esc(src(p))+'" alt="עמוד מחירון '+(i+1)+'" style="object-fit:contain;background:var(--surface)"><div class="tb">' +
+          (i ? '<button data-act="price-up" data-i="'+i+'">קודם</button>' : '<span></span>') + '<button data-act="price-del" data-i="'+i+'">הסרה</button></div></div>'; }).join('') +
+      '<label class="add-img">+ עמוד<br>מחירון<input type="file" accept="image/*" multiple id="pricefile"></label></div>' +
+      '<span class="hint" style="margin:6px 0 0">תמונה של המחירון. אפשר כמה עמודים. כפתור „מחירון” יופיע בראש האתר ובכל עבודה.</span></div>' +
+    f('priceText','נוסח המחירון בטקסט (מומלץ, לנגישות)','area','למשל: תסרוקת כלה – 800 ₪ ...','קוראי מסך לא יכולים לקרוא תמונה. הטקסט מוצג ללקוחות תחת „גרסת טקסט של המחירון”.') +
     '<div class="field"><span class="lbl">תמונת שער</span><div class="logo-edit"><div class="prev" style="width:160px">' + (s.cover ? '<img src="'+esc(src(s.cover))+'" alt="תמונת השער הנוכחית" style="width:100%;height:100%;object-fit:cover">' : 'אין תמונת שער') + '</div>' +
       '<label class="btn sec" style="cursor:pointer">'+(s.cover?'החלפה':'העלאה')+'<input type="file" accept="image/*" id="coverfile" style="display:none"></label>' + (s.cover ? '<button class="ic" data-act="cover-del">הסרה</button>' : '') + '</div>' +
       '<span class="hint" style="margin:0">מופיעה בראש העמוד בסט „קטלוג”. בלי תמונת שער, מוצגת העבודה הראשונה שסומנה ★.</span></div>' +
@@ -1261,6 +1315,11 @@ function bindEditorInputs(box){
   var ak = box.querySelector('#ai-key-save'); if (ak) ak.addEventListener('click', function(){ var v = box.querySelector('#ai-key').value.trim(); if (!v) return; try{ localStorage.setItem(AI_KEY, v); }catch(e){} ed.bulkCat = AUTO; ed.bulkType = AUTO; renderEditor(); toast('הזיהוי האוטומטי מופעל במכשיר הזה.'); });
   var bf = box.querySelector('#bulkfile'); if (bf) bf.addEventListener('change', function(){ bulkAdd(bf.files); });
   var fi = box.querySelector('#imgfile'); if (fi) fi.addEventListener('change', function(){ addImages(fi.files); });
+  var pf = box.querySelector('#pricefile'); if (pf) pf.addEventListener('change', function(){
+    var files = Array.prototype.slice.call(pf.files || []); if (!files.length) return; var busy = showBusy('מעבד את המחירון…');
+    files.reduce(function(p, f){ return p.then(function(){ return loadImage(f).then(function(r){ draft.prices.push(draw(r.img, 2200, 'image/jpeg', 0.9)); r.done(); }, function(){}); }); }, Promise.resolve())
+      .then(function(){ busy.remove(); markDirty(); toast('המחירון נוסף. „פרסום השינויים” מעלה אותו לאתר.'); });
+  });
   var cf = box.querySelector('#coverfile'); if (cf) cf.addEventListener('change', function(){ var f = cf.files && cf.files[0]; if (!f) return;
     loadImage(f).then(function(r){ draft.site.cover = draw(r.img, 1800, 'image/jpeg', 0.84); r.done(); markDirty(); toast('תמונת השער עודכנה. „פרסום השינויים” מעלה אותה לאתר.'); }, function(){ toast('הקובץ לא נטען. אפשר לנסות JPG או PNG.'); }); });
   var lf = box.querySelector('#logofile'); if (lf) lf.addEventListener('change', function(){ setLogo(lf.files && lf.files[0]); });
@@ -1365,7 +1424,8 @@ function startForm(w){
 }
 function saveForm(){
   var F = ed.form; if (!F.images.length){ toast('צריך לפחות תמונה אחת לעבודה.'); return; }
-  var w = {id:F.id, title:F.title.trim(), cat:F.cat, type:F.type, tags:F.tags.split(/[,،]/).map(function(t){return t.trim();}).filter(Boolean), desc:F.desc.trim(), images:F.images, visible:F.visible, featured:F.featured, review:false};
+  var old = draft.works.filter(function(x){ return x.id === F.id; })[0];
+  var w = {no:old ? old.no : 0, id:F.id, title:F.title.trim(), cat:F.cat, type:F.type, tags:F.tags.split(/[,،]/).map(function(t){return t.trim();}).filter(Boolean), desc:F.desc.trim(), images:F.images, visible:F.visible, featured:F.featured, review:false};
   if (F.isNew) draft.works.unshift(w); else draft.works = draft.works.map(function(x){ return x.id === w.id ? w : x; });
   ed.form = null; ed.tab = 'works'; markDirty(); toast('העבודה נשמרה. „פרסום השינויים” מעלה אותה לאתר.');
 }
@@ -1373,9 +1433,19 @@ function saveForm(){
 /* ---------- publish to GitHub ---------- */
 function isData(s){ return typeof s === 'string' && s.indexOf('data:') === 0; }
 function imagePaths(st){
-  var out = {}; if (st.site.logo && !isData(st.site.logo)) out[st.site.logo] = 1; if (st.site.cover && !isData(st.site.cover)) out[st.site.cover] = 1;
+  var out = {}; if (st.site.logo && !isData(st.site.logo)) out[st.site.logo] = 1; if (st.site.cover && !isData(st.site.cover)) out[st.site.cover] = 1; (st.prices || []).forEach(function(p){ if (!isData(p)) out[p] = 1; });
   st.works.forEach(function(w){ w.images.forEach(function(i){ [i.full, i.thumb].forEach(function(p){ if (p && !isData(p)) out[p] = 1; }); }); });
   return out;
+}
+function workPage(st, w, i){
+  var base = siteBase(), name = st.site.name, title = [workNo(w), w.title || TYPE_LABEL[w.type]].filter(Boolean).join(' · ');
+  var target = base + '#w=' + w.id + '&i=' + (i+1), img = base + w.images[i].thumb;
+  return '<!doctype html><html lang="he" dir="rtl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">' +
+    '<title>'+esc(title + ' | ' + name)+'</title><meta name="robots" content="noindex">' +
+    '<meta property="og:title" content="'+esc(title)+'"><meta property="og:description" content="'+esc([catName(w.cat), name].filter(Boolean).join(' · '))+'">' +
+    '<meta property="og:image" content="'+esc(img)+'"><meta property="og:type" content="website"><meta property="og:url" content="'+esc(base + 'w/' + w.id + '-' + (i+1) + '.html')+'">' +
+    '<meta http-equiv="refresh" content="0;url='+esc(target)+'"></head><body style="font-family:Arial,sans-serif;text-align:center;padding:40px">' +
+    '<p><a href="'+esc(target)+'">לצפייה בעבודה בגלריה</a></p></body></html>';
 }
 function ogBlock(st){
   var s = st.site, vis = st.works.filter(function(w){return w.visible && w.images.length;}), f = vis.filter(function(w){return w.featured;})[0] || vis[0];
@@ -1396,6 +1466,7 @@ function publish(){
   .then(function(c){
     baseTree = c.tree.sha;
     function queue(dataUrl, path){ uploads.push({data:dataUrl, path:path}); localSrc[path] = dataUrl; return path; }
+    state.prices = state.prices.map(function(p){ return isData(p) ? queue(p, 'images/price-' + uid() + '.jpg') : p; });
     if (isData(state.site.cover)) state.site.cover = queue(state.site.cover, 'images/cover-' + uid() + '.jpg');
     if (isData(state.site.logo)) state.site.logo = queue(state.site.logo, 'images/logo-' + uid() + (state.site.logo.indexOf('image/png') > 0 ? '.png' : '.jpg'));
     state.works.forEach(function(w){ w.images = w.images.map(function(i){
@@ -1412,6 +1483,16 @@ function publish(){
     var before = imagePaths(saved), after = imagePaths(state);
     Object.keys(before).forEach(function(p){ if (!after[p] && p.indexOf('images/') === 0) tree.push({path:p, mode:'100644', type:'blob', sha:null}); });
     state.v = 2; state.site.a11yDate = today();
+    var oldPages = {}; (saved.pages || []).forEach(function(id){ var w = saved.works.filter(function(x){ return x.id === id; })[0]; oldPages[id] = w ? w.images.length : 0; });
+    state.works.forEach(function(w){
+      if (!w.visible || !w.images.length) return;
+      w.images.forEach(function(im, i){ tree.push({path:'w/' + w.id + '-' + (i+1) + '.html', mode:'100644', type:'blob', content:workPage(state, w, i)}); });
+    });
+    Object.keys(oldPages).forEach(function(id){
+      var w = state.works.filter(function(x){ return x.id === id && x.visible; })[0], keep = w ? w.images.length : 0;
+      for (var i = keep + 1; i <= oldPages[id]; i++) tree.push({path:'w/' + id + '-' + i + '.html', mode:'100644', type:'blob', sha:null});
+    });
+    state.pages = state.works.filter(function(w){ return w.visible && w.images.length; }).map(function(w){ return w.id; });
     var text = JSON.stringify(state);
     tree.push({path:'data.json', mode:'100644', type:'blob', content:text});
     state._text = text;
@@ -1487,6 +1568,9 @@ document.addEventListener('click', function(e){
     case 'th-clear': draft.theme[t.dataset.k] = ''; markDirty(); break;
     case 'th-reset': if (!needConfirm('th-reset')) return; draft.theme = skinTheme(draft.theme.skin); markDirty(); break;
     case 'show-a11y': doc.ret = t; doc.open = 'a11y'; closeA11y(); renderDoc(); break;
+    case 'show-prices': doc.ret = lb.open ? null : t; if (lb.open) closeLB(); doc.open = 'prices'; renderDoc(); break;
+    case 'price-del': draft.prices.splice(+t.dataset.i, 1); markDirty(); break;
+    case 'price-up': var pi = +t.dataset.i; if (pi > 0){ var pp = draft.prices.splice(pi, 1)[0]; draft.prices.splice(pi-1, 0, pp); markDirty(); } break;
     case 'show-privacy': doc.ret = t; doc.open = 'privacy'; renderDoc(); break;
     case 'doc-close': doc.open = null; renderDoc(); break;
     case 'a11y-open': toggleA11y(); break;
@@ -1531,13 +1615,24 @@ applyA11y();
 applyTheme(DEFAULT_THEME);
 window.__previewSkin = function(k){ if (!SKINS[k]) return; draft.theme = skinTheme(k); render(); };
 render();
+function handleHash(){
+  var hs = location.hash || '';
+  if (hs === '#prices'){ doc.open = 'prices'; doc.ret = null; renderDoc(); return; }
+  var m = hs.match(/[#&]w=([^&]+)(?:&i=(\d+))?/);
+  if (!m) return;
+  var w = draft.works.filter(function(x){ return x.id === decodeURIComponent(m[1]) && x.visible && x.images.length; })[0];
+  if (!w){ toast('העבודה הזו כבר לא מוצגת בגלריה.'); return; }
+  openLB(w.id); lb.img = Math.min(w.images.length - 1, Math.max(0, (+m[2] || 1) - 1)); renderLB();
+  try { history.replaceState(null, '', location.pathname + location.search); } catch(e){}
+}
+window.addEventListener('hashchange', function(){ if (loaded) handleHash(); });
 if (cfg && cfg.token){
-  loadFromGitHub().then(render, function(e){
+  loadFromGitHub().then(function(){ render(); handleHash(); }, function(e){
     toast(ghError(e), 6000);
-    return loadPublic().then(function(){ render(); if (wantEdit) openLogin(); });
+    return loadPublic().then(function(){ render(); if (wantEdit) openLogin(); else handleHash(); });
   });
 } else {
-  loadPublic().then(function(){ render(); if (wantEdit) openLogin(); });
+  loadPublic().then(function(){ render(); if (wantEdit) openLogin(); else handleHash(); });
 }
 })();
 </script>
