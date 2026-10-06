@@ -205,6 +205,43 @@ button{cursor:pointer}
 
 .loading{min-height:70vh;display:grid;place-items:center;color:var(--muted);font-size:18px}
 .ai-badge{display:inline-block;font-size:12px;font-weight:600;color:var(--accent);background:var(--blush);border-radius:999px;padding:1px 8px;vertical-align:middle;margin-inline-start:4px}
+.skip{position:absolute;right:12px;top:-60px;z-index:100;background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:10px;text-decoration:none;font-weight:600}
+.skip:focus{top:calc(10px + env(safe-area-inset-top,0px))}
+.browse:focus{outline:none}
+.legal{flex-basis:100%;display:flex;gap:18px;flex-wrap:wrap;font-size:14px}
+.legal .linkbtn{color:var(--muted)}
+.a11y-btn{position:fixed;left:18px;bottom:calc(88px + env(safe-area-inset-bottom,0px));z-index:20;width:44px;height:44px;border-radius:50%;border:1px solid var(--line);background:var(--surface);color:var(--ink);display:grid;place-items:center;box-shadow:var(--shadow)}
+.a11y-btn svg{width:24px;height:24px}
+.a11y-panel{position:fixed;left:18px;bottom:calc(140px + env(safe-area-inset-bottom,0px));z-index:45;width:min(290px,calc(100vw - 36px));background:var(--surface);border:1px solid var(--line);border-radius:16px;box-shadow:var(--shadow);padding:14px;display:flex;flex-direction:column;gap:8px}
+.a11y-head{display:flex;justify-content:space-between;align-items:center}
+.a11y-x{border:0;background:none;font-size:24px;width:36px;height:36px}
+.a11y-size{display:flex;align-items:center;gap:8px}.a11y-size span{flex:1}
+.a11y-size button{border:1px solid var(--line);background:var(--bg);border-radius:10px;width:46px;height:38px;font-weight:700}
+.a11y-opt{border:1px solid var(--line);background:var(--bg);border-radius:10px;padding:9px 12px;text-align:right}
+.a11y-opt[aria-pressed="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.docpage{position:fixed;inset:0;z-index:55;margin:auto;width:min(720px,100%);height:min(88vh,100%);overflow:auto;background:var(--bg);border-radius:18px;padding:28px 24px 32px;box-shadow:var(--shadow)}
+@media (max-width:720px){.docpage{height:100%;border-radius:0;padding-top:calc(28px + env(safe-area-inset-top,0px))}}
+.docpage h2{font-family:var(--display);font-weight:400;font-size:34px;margin:0 0 14px;padding-left:48px}
+.docpage h3{font-size:18px;margin:20px 0 6px}
+.docpage p,.docpage li{color:var(--ink)}
+.docpage a{color:var(--accent)}
+.doc-x{position:absolute;top:calc(14px + env(safe-area-inset-top,0px));left:14px}
+.presets{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px}
+.preset{display:flex;align-items:center;gap:10px;border:1px solid var(--line);background:var(--surface);border-radius:12px;padding:10px;text-align:right}
+.preset[aria-pressed="true"]{box-shadow:0 0 0 2px var(--accent)}
+.preset .dots{display:flex}.preset .dots i{width:16px;height:16px;border-radius:50%;border:1px solid rgba(0,0,0,.15);margin-inline-start:-4px}
+.color-row{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:6px 0}
+.color-row label{min-width:90px}
+.color-row input[type=color]{width:48px;height:36px;border:1px solid var(--line);border-radius:8px;background:var(--surface);padding:2px}
+.font-sample{border:1px dashed var(--line);border-radius:10px;padding:8px 12px;margin-top:4px}
+.warn{border:1px solid #B3261E;color:#B3261E;background:var(--surface);border-radius:12px;padding:10px 14px;margin:0 0 16px;font-size:15px}
+.warn ul{margin:6px 0;padding-right:18px}
+.consent{margin:10px 0 0;font-size:14px;font-weight:600;color:var(--accent)}
+html.a11y-contrast{--bg:#FFFFFF!important;--surface:#FFFFFF!important;--ink:#000000!important;--muted:#000000!important;--accent:#0B3D91!important;--accent-ink:#FFFFFF!important;--blush:#E8E8E8!important;--line:#000000!important;--gold:#000000!important;color-scheme:light!important}
+html.a11y-links a,html.a11y-links button,html.a11y-links .linkbtn{text-decoration:underline!important;outline:2px solid currentColor;outline-offset:2px}
+html.a11y-font{--display:Arial,"Segoe UI",sans-serif!important;--body:Arial,"Segoe UI",sans-serif!important}
+html.a11y-font body{letter-spacing:.02em;word-spacing:.08em}
+html.a11y-still *,html.a11y-still *::before,html.a11y-still *::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}
 </style>
 </head>
 <body>
@@ -220,13 +257,167 @@ function esc(s){ return String(s == null ? '' : s).replace(/[&<>"']/g, function(
 
 var DEFAULTS = {
   v:2,
-  site:{ name:'שם הסטודיו', tagline:'תסרוקות ערב ואיפור לנשים ולנערות', about:'', phone:'', instagram:'', waMessage:'היי, הגעתי מהגלריה ואשמח לשמוע פרטים', logo:'', showName:'yes' },
+  site:{ name:'שם הסטודיו', tagline:'תסרוקות ערב ואיפור לנשים ולנערות', about:'', phone:'', instagram:'', waMessage:'היי, הגעתי מהגלריה ואשמח לשמוע פרטים', logo:'', showName:'yes', a11yName:'', a11yPhone:'', a11yEmail:'', a11yDate:'' },
   categories:[{id:'c1',name:'כלות'},{id:'c2',name:'ערב ואירועים'},{id:'c3',name:'בת מצווה'}],
   works:[]
 };
+/* ---------- theme ---------- */
+var PRESETS = {
+  powder:{name:'ורוד פודרה', light:{bg:'#F8F2F3',surface:'#FFFFFF',ink:'#2B1726',muted:'#7A6372',accent:'#8C2752',blush:'#EED9DF',gold:'#BF9B6F',line:'#E6D3D9'},
+          dark:{bg:'#1B1119',surface:'#261823',ink:'#F5E9EE',muted:'#B79FAE',accent:'#E07AA3',blush:'#3A2534',gold:'#C9A77C',line:'#3C2A37'}},
+  champagne:{name:'שמפניה וזהב', light:{bg:'#F7F3EC',surface:'#FFFDF9',ink:'#2A2118',muted:'#6F6252',accent:'#80622A',blush:'#EFE4D2',gold:'#B8955A',line:'#E5DACB'},
+          dark:{bg:'#1A1611',surface:'#241E17',ink:'#F3EBDD',muted:'#B5A68F',accent:'#D9B46A',blush:'#352B1F',gold:'#C9A77C',line:'#3A3024'}},
+  lavender:{name:'לבנדר', light:{bg:'#F5F2F8',surface:'#FFFFFF',ink:'#261C33',muted:'#6A5E7C',accent:'#6A3F99',blush:'#E4DAF0',gold:'#A88BC4',line:'#DED5EA'},
+          dark:{bg:'#16121D',surface:'#211A2B',ink:'#EEE8F6',muted:'#ADA1C0',accent:'#BC9AE6',blush:'#2F2540',gold:'#A88BC4',line:'#352A45'}},
+  bordeaux:{name:'בורדו', light:{bg:'#FBF5F2',surface:'#FFFFFF',ink:'#2A1214',muted:'#74585A',accent:'#7A1F2B',blush:'#F0DCDC',gold:'#B98B73',line:'#E8D5D3'},
+          dark:{bg:'#1A0E10',surface:'#26161A',ink:'#F6E9EA',muted:'#BC9EA1',accent:'#E88B98',blush:'#3A2226',gold:'#C49A80',line:'#402629'}},
+  sage:{name:'מרווה', light:{bg:'#F3F5F0',surface:'#FFFFFF',ink:'#1F2A22',muted:'#5B675C',accent:'#3F6B4E',blush:'#DDE6D8',gold:'#A3B18A',line:'#D7E0D2'},
+          dark:{bg:'#121713',surface:'#1B221C',ink:'#E9F0E7',muted:'#A3B0A1',accent:'#8FC3A0',blush:'#26302A',gold:'#8C9C78',line:'#2C3830'}},
+  mono:{name:'שחור-לבן', light:{bg:'#FAFAFA',surface:'#FFFFFF',ink:'#141414',muted:'#5A5A5A',accent:'#141414',blush:'#ECECEC',gold:'#9A9A9A',line:'#E2E2E2'},
+          dark:{bg:'#111111',surface:'#1B1B1B',ink:'#F2F2F2',muted:'#A8A8A8',accent:'#F2F2F2',blush:'#2A2A2A',gold:'#777777',line:'#2E2E2E'}}
+};
+var FONT_SPEC = {'Bellefair':'Bellefair','Frank Ruhl Libre':'Frank+Ruhl+Libre:wght@400;700','Suez One':'Suez+One','Secular One':'Secular+One','Amatic SC':'Amatic+SC:wght@400;700',
+  'Assistant':'Assistant:wght@300;400;600;700','Heebo':'Heebo:wght@300;400;600;700','Rubik':'Rubik:wght@300;400;600;700','Varela Round':'Varela+Round','Noto Sans Hebrew':'Noto+Sans+Hebrew:wght@300;400;600;700'};
+var DISPLAY_FONTS = ['Bellefair','Frank Ruhl Libre','Suez One','Secular One','Amatic SC'];
+var BODY_FONTS = ['Assistant','Heebo','Rubik','Varela Round','Noto Sans Hebrew'];
+var DEFAULT_THEME = {preset:'powder', accent:'', bg:'', ink:'', display:'Bellefair', body:'Assistant', frame:'arch', corners:'round', cols:'2', mode:'auto'};
+var THEME_OPTS = {frame:['arch','circle','soft'], corners:['round','sharp'], cols:['2','1'], mode:['auto','light','dark']};
+function isHex(c){ return /^#[0-9a-f]{6}$/i.test(c || ''); }
+function normTheme(t){
+  var o = clone(DEFAULT_THEME); t = t || {};
+  if (PRESETS[t.preset]) o.preset = t.preset;
+  ['accent','bg','ink'].forEach(function(k){ if (isHex(t[k])) o[k] = t[k]; });
+  if (DISPLAY_FONTS.indexOf(t.display) !== -1) o.display = t.display;
+  if (BODY_FONTS.indexOf(t.body) !== -1) o.body = t.body;
+  for (var k in THEME_OPTS) if (THEME_OPTS[k].indexOf(t[k]) !== -1) o[k] = t[k];
+  return o;
+}
+function rgb(h){ return [1,3,5].map(function(i){ return parseInt(h.substr(i,2),16); }); }
+function hex(a){ return '#' + a.map(function(v){ return ('0' + Math.round(Math.max(0,Math.min(255,v))).toString(16)).slice(-2); }).join(''); }
+function mix(a, b, t){ var x = rgb(a), y = rgb(b); return hex(x.map(function(v,i){ return v + (y[i]-v)*t; })); }
+function lum(h){ return rgb(h).map(function(v){ v/=255; return v <= 0.03928 ? v/12.92 : Math.pow((v+0.055)/1.055, 2.4); }).reduce(function(s,v,i){ return s + v*[0.2126,0.7152,0.0722][i]; }, 0); }
+function contrast(a, b){ var x = lum(a), y = lum(b); return (Math.max(x,y)+0.05)/(Math.min(x,y)+0.05); }
+function onColor(c){ return contrast('#FFFFFF', c) >= contrast('#1B1119', c) ? '#FFFFFF' : '#1B1119'; }
+function lightVars(t){
+  var v = clone(PRESETS[t.preset].light);
+  if (t.bg){ v.bg = t.bg; v.surface = lum(t.bg) > 0.5 ? mix(t.bg, '#FFFFFF', 0.7) : mix(t.bg, '#FFFFFF', 0.06); }
+  if (t.ink) v.ink = t.ink;
+  if (t.accent) v.accent = t.accent;
+  if (t.bg || t.ink){ v.muted = mix(v.ink, v.bg, 0.38); v.line = mix(v.ink, v.bg, 0.86); }
+  if (t.bg || t.accent) v.blush = mix(v.accent, v.bg, 0.84);
+  return v;
+}
+function varsCss(v){
+  return '--bg:'+v.bg+';--surface:'+v.surface+';--ink:'+v.ink+';--muted:'+v.muted+';--accent:'+v.accent+';--accent-ink:'+onColor(v.accent)+';--blush:'+v.blush+';--gold:'+v.gold+';--line:'+v.line+';';
+}
+function themeWarnings(t){
+  var v = lightVars(t), out = [];
+  if (contrast(v.ink, v.bg) < 4.5) out.push('צבע הטקסט קרוב מדי לצבע הרקע. יהיה קשה לקרוא.');
+  if (contrast(v.accent, v.bg) < 4.5) out.push('צבע ההדגשה חלש מדי על הרקע. שורת התיאור והקישורים יהיו קשים לקריאה.');
+  if (contrast(v.muted, v.bg) < 4.5) out.push('הטקסט המשני (כמו שמות הקטגוריות) יוצא חלש מדי. כדאי צבע טקסט כהה יותר.');
+  return out;
+}
+function applyTheme(t){
+  t = normTheme(t);
+  var L = lightVars(t), D = PRESETS[t.preset].dark, css = ':root{' + varsCss(L) + 'color-scheme:light;';
+  css += '--display:"' + t.display + '","Frank Ruhl Libre","David",Georgia,serif;--body:"' + t.body + '","Segoe UI",Arial,sans-serif;}';
+  if (t.mode === 'auto') css += '@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){' + varsCss(D) + 'color-scheme:dark;}}';
+  css += ':root[data-theme="dark"]{' + varsCss(D) + 'color-scheme:dark;}';
+  if (t.frame === 'circle') css += '.arch,.arch .in{border-radius:50%}.arch .in,.arch:nth-child(2) .in{aspect-ratio:1/1}.arches{align-items:center}';
+  if (t.frame === 'soft') css += '.arch{border-radius:26px}.arch .in{border-radius:20px}';
+  if (t.corners === 'sharp') css += '.card .ph,.lb-stage img,.row img,.thumb img{border-radius:2px}';
+  if (t.cols === '1') css += '@media (max-width:699px){.grid{columns:1}}';
+  var st = document.getElementById('theme-style');
+  if (!st){ st = document.createElement('style'); st.id = 'theme-style'; document.head.appendChild(st); }
+  st.textContent = css;
+  var html = document.documentElement;
+  if (t.mode === 'auto') html.removeAttribute('data-theme'); else html.setAttribute('data-theme', t.mode);
+  var fams = [t.display, t.body].filter(function(f){ return f !== 'Bellefair' && f !== 'Assistant'; });
+  var fl = document.getElementById('theme-fonts');
+  if (fams.length){
+    if (!fl){ fl = document.createElement('link'); fl.id = 'theme-fonts'; fl.rel = 'stylesheet'; document.head.appendChild(fl); }
+    var href = 'https://fonts.googleapis.com/css2?' + fams.map(function(f){ return 'family=' + FONT_SPEC[f]; }).join('&') + '&display=swap';
+    if (fl.getAttribute('href') !== href) fl.setAttribute('href', href);
+  } else if (fl) fl.remove();
+}
+
+/* ---------- visitor accessibility settings ---------- */
+var A11Y_KEY = 'gallery-a11y-v1';
+var a11y = (function(){ try { return JSON.parse(localStorage.getItem(A11Y_KEY) || '{}') || {}; } catch(e){ return {}; } })();
+function applyA11y(){
+  var h = document.documentElement;
+  h.classList.toggle('a11y-contrast', !!a11y.contrast); h.classList.toggle('a11y-links', !!a11y.links);
+  h.classList.toggle('a11y-still', !!a11y.still); h.classList.toggle('a11y-font', !!a11y.font);
+  document.body.style.zoom = a11y.size ? String(1 + a11y.size * 0.15) : '';
+  try { localStorage.setItem(A11Y_KEY, JSON.stringify(a11y)); } catch(e){}
+}
+function a11yPanel(){
+  function tg(k, label){ return '<button class="a11y-opt" data-a11y="'+k+'" aria-pressed="'+!!a11y[k]+'">'+label+'</button>'; }
+  return '<div class="a11y-panel" role="dialog" aria-modal="false" aria-label="הגדרות נגישות" id="a11y-panel">' +
+    '<div class="a11y-head"><strong>הגדרות נגישות</strong><button class="a11y-x" data-act="a11y-close" aria-label="סגירת הגדרות הנגישות">×</button></div>' +
+    '<div class="a11y-size"><span>גודל טקסט</span><button data-act="a11y-smaller" aria-label="הקטנת טקסט"'+(a11y.size?'':' disabled')+'>א−</button><button data-act="a11y-bigger" aria-label="הגדלת טקסט"'+((a11y.size||0)>=3?' disabled':'')+'>א+</button></div>' +
+    tg('contrast','ניגודיות גבוהה') + tg('links','הדגשת קישורים וכפתורים') + tg('font','גופן קריא') + tg('still','עצירת אנימציות') +
+    '<button class="a11y-opt" data-act="a11y-reset">איפוס הגדרות</button>' +
+    '<button class="linkbtn" data-act="show-a11y" style="margin-top:6px">הצהרת נגישות</button></div>';
+}
+
+/* ---------- legal pages ---------- */
+function today(){ var d = new Date(); return d.getDate() + '.' + (d.getMonth()+1) + '.' + d.getFullYear(); }
+function a11yStatement(){
+  var s = draft.site, name = esc(s.name), ph = esc(s.a11yPhone || s.phone), em = esc(s.a11yEmail);
+  return '<h2>הצהרת נגישות</h2>' +
+    '<p>'+name+' רואה חשיבות במתן שירות שוויוני לכלל הלקוחות, ובכלל זה לאנשים עם מוגבלות, ופועלת להנגשת האתר בהתאם לחוק שוויון זכויות לאנשים עם מוגבלות, התשנ"ח-1998, ולתקנות שוויון זכויות לאנשים עם מוגבלות (התאמות נגישות לשירות), התשע"ג-2013.</p>' +
+    '<h3>רמת הנגישות</h3><p>האתר נבנה במטרה לעמוד בדרישות התקן הישראלי ת"י 5568, המבוסס על הנחיות WCAG 2.0 ברמה AA.</p>' +
+    '<h3>התאמות שבוצעו באתר</h3><ul>' +
+    '<li>מבנה עמוד עם כותרות וסימון אזורים, המותאם לקוראי מסך.</li><li>תפעול מלא באמצעות מקלדת, כולל סימון ברור של הרכיב שבפוקוס וקישור לדילוג ישיר לעבודות.</li>' +
+    '<li>טקסט חלופי לתמונות, המבוסס על שם העבודה וסוגה.</li><li>ניגודיות צבעים בהתאם לדרישות התקן.</li><li>אפשרות להגדלת הטקסט ולהגדלת התצוגה בדפדפן.</li>' +
+    '<li>תפריט הגדרות נגישות: הגדלת טקסט, ניגודיות גבוהה, הדגשת קישורים, גופן קריא ועצירת אנימציות.</li><li>התאמה לתצוגה בטלפון, בטאבלט ובמחשב.</li></ul>' +
+    '<h3>מגבלות ידועות</h3><p>התיאור הטקסטואלי של חלק מהתמונות כללי, ומבוסס על שם העבודה וסוגה ולא על תיאור מלא של התמונה.</p>' +
+    '<h3>נתקלתם בבעיית נגישות?</h3><p>נשמח לשמוע ולתקן. אפשר לפנות לרכז/ת הנגישות' + (s.a11yName ? ', ' + esc(s.a11yName) : '') + ':</p><ul>' +
+    (ph ? '<li>טלפון: <a href="tel:'+ph.replace(/[^\d+]/g,'')+'">'+ph+'</a></li>' : '') + (em ? '<li>דוא"ל: <a href="mailto:'+em+'">'+em+'</a></li>' : '') + '</ul>' +
+    '<p class="hint">ההצהרה עודכנה בתאריך '+esc(s.a11yDate || today())+'.</p>';
+}
+function privacyPolicy(){
+  var s = draft.site, name = esc(s.name), ph = esc(s.phone);
+  return '<h2>מדיניות פרטיות</h2>' +
+    '<p>האתר מציג את גלריית העבודות של '+name+'. האתר אינו כולל טפסים, אינו מבקש פרטים אישיים, ואינו משתמש בעוגיות מעקב, בפרסום או בכלי סטטיסטיקה.</p>' +
+    '<h3>מידע טכני</h3><p>האתר מתארח בשירות GitHub Pages, והגופנים נטענים משירות Google Fonts. כמו בכל גלישה באינטרנט, שירותים אלה מקבלים נתונים טכניים כגון כתובת IP וסוג הדפדפן, בהתאם למדיניות הפרטיות שלהם.</p>' +
+    '<h3>פנייה בוואטסאפ</h3><p>לחיצה על כפתור וואטסאפ פותחת שיחה באפליקציית וואטסאפ. ההודעה נשלחת ישירות לעסק, והפרטים בה משמשים רק למענה לפנייה ולתיאום השירות.</p>' +
+    '<h3>התמונות בגלריה</h3><p>התמונות מתפרסמות בהסכמת המצולמות, ובמקרה של קטינות בהסכמת הורה. מי שמופיעה בתמונה ומבקשת להסיר אותה מוזמנת לפנות אלינו, והתמונה תוסר בהקדם.</p>' +
+    '<h3>הגדרות הנגישות</h3><p>הגדרות הנגישות שבוחרים באתר נשמרות בדפדפן שלכם בלבד ואינן נשלחות לשום מקום.</p>' +
+    (ph ? '<h3>יצירת קשר</h3><p>בכל שאלה בנושא פרטיות אפשר לפנות לטלפון <a href="tel:'+ph.replace(/[^\d+]/g,'')+'">'+ph+'</a>.</p>' : '');
+}
+var doc = {open:null, ret:null};
+function renderDoc(){
+  var box = document.getElementById('docbox');
+  if (!doc.open){ box.innerHTML = ''; box.hidden = true; if (!lb.open && !ed.open) document.body.style.overflow = ''; if (doc.ret && document.body.contains(doc.ret)) doc.ret.focus(); return; }
+  box.hidden = false; document.body.style.overflow = 'hidden';
+  box.innerHTML = '<div class="ed-back" data-act="doc-close"></div><div class="docpage" role="dialog" aria-modal="true" aria-label="'+(doc.open==='a11y'?'הצהרת נגישות':'מדיניות פרטיות')+'">' +
+    '<button class="ed-x doc-x" data-act="doc-close" aria-label="סגירה">×</button>' + (doc.open === 'a11y' ? a11yStatement() : privacyPolicy()) + '</div>';
+  box.querySelector('.doc-x').focus();
+}
+var a11yOpen = false;
+function toggleA11y(){ if (a11yOpen) return closeA11y(); a11yOpen = true; refreshA11y(); var b = document.querySelector('#a11y-panel button'); if (b) b.focus(); }
+function closeA11y(){ if (!a11yOpen) return; a11yOpen = false; refreshA11y(); var b = document.querySelector('.a11y-btn'); if (b) b.focus(); }
+function refreshA11y(){
+  var box = document.getElementById('a11ybox'); box.innerHTML = a11yOpen ? a11yPanel() : '';
+  var b = document.querySelector('.a11y-btn'); if (b) b.setAttribute('aria-expanded', a11yOpen);
+}
+function trapFocus(e){
+  var c = lb.open ? document.querySelector('.lb') : doc.open ? document.querySelector('.docpage') : ed.open ? document.querySelector('.ed') : null;
+  if (!c) return;
+  var f = Array.prototype.filter.call(c.querySelectorAll('a[href],button:not([disabled]),input,select,textarea,[tabindex]:not([tabindex="-1"])'), function(el){ return el.offsetParent !== null || el === document.activeElement; });
+  if (!f.length) return;
+  var first = f[0], last = f[f.length-1];
+  if (!c.contains(document.activeElement)){ e.preventDefault(); first.focus(); }
+  else if (e.shiftKey && document.activeElement === first){ e.preventDefault(); last.focus(); }
+  else if (!e.shiftKey && document.activeElement === last){ e.preventDefault(); first.focus(); }
+}
+
 function normImg(i){ return typeof i === 'string' ? {full:i, thumb:i} : (i && i.full ? {full:i.full, thumb:i.thumb || i.full} : null); }
 function normalize(d){
   var o = clone(DEFAULTS);
+  o.theme = normTheme(d && d.theme);
   if (!d || !d.site) return o;
   for (var k in o.site) if (typeof d.site[k] === 'string') o.site[k] = d.site[k];
   if (Array.isArray(d.categories)) o.categories = d.categories.filter(function(c){return c && c.id;});
@@ -238,7 +429,7 @@ function normalize(d){
   return o;
 }
 
-var saved = clone(DEFAULTS), draft = clone(DEFAULTS), dirty = false, loaded = false;
+var saved = normalize(null), draft = normalize(null), dirty = false, loaded = false;
 var ui = {q:'', cat:'all', type:'all'};
 var ed = {open:false, tab:'works', form:null, pending:null, bulkCat:'', bulkType:'hair', bulkHide:false, login:false, reviewOnly:false};
 var lb = {open:false, list:[], i:0, img:0, ret:null};
@@ -393,6 +584,7 @@ function filtered(){
 }
 function waNumber(){ var d = String(draft.site.phone||'').replace(/\D/g,''); if (!d) return ''; if (d.charAt(0)==='0') d = '972' + d.slice(1); return d; }
 function waLink(text){ var n = waNumber(); return n ? 'https://wa.me/' + n + '?text=' + encodeURIComponent(text || draft.site.waMessage || '') : ''; }
+function altText(w){ return [w.title || TYPE_LABEL[w.type], catName(w.cat)].filter(Boolean).join(', '); }
 function plural(n){ return n === 1 ? 'עבודה אחת' : n + ' עבודות'; }
 var ICON_CHAT = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 11.5a8 8 0 0 1-11.6 7.1L4 20l1.4-4.2A8 8 0 1 1 20 11.5z"/></svg>';
 var ICON_SEARCH = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>';
@@ -404,6 +596,7 @@ function render(){
   if (!loaded){ root.innerHTML = '<div class="loading">טוען את הגלריה…</div>'; return; }
   var s = draft.site, vis = visibleWorks();
   document.title = s.name || 'גלריית עבודות';
+  applyTheme(draft.theme);
   var feat = vis.filter(function(w){return w.featured;});
   var hero = (feat.length ? feat : vis).slice(0,3), arches = '';
   for (var i=0;i<3;i++){
@@ -416,6 +609,7 @@ function render(){
   var hasHair = vis.some(function(w){return w.type!=='makeup';}), hasMk = vis.some(function(w){return w.type!=='hair';});
   var wa = waLink();
   root.innerHTML =
+  '<a class="skip" href="#works">דילוג לעבודות</a>' +
   '<div class="wrap"><header class="hero"><div>' +
       (s.logo ? '<img class="hero-logo" src="'+esc(src(s.logo))+'" alt="'+esc(s.name)+'">' : '') +
       (!s.logo || s.showName ? '<h1>'+esc(s.name)+'</h1>' : '<h1 class="sr">'+esc(s.name)+'</h1>') +
@@ -425,16 +619,18 @@ function render(){
       (wa ? '<a class="cta" href="'+esc(wa)+'" target="_blank" rel="noopener">'+ICON_CHAT+'לתיאום מועד בוואטסאפ</a>' : '') +
       (vis.length ? '<a class="cta ghost" href="#works">לכל העבודות</a>' : '') +
     '</div></div><div class="arches">'+arches+'</div></header>' +
-    '<section class="browse" id="works" aria-label="העבודות"><div class="toolbar">' +
+    '<main><section class="browse" id="works" tabindex="-1" aria-labelledby="works-h"><h2 class="sr" id="works-h">העבודות</h2><div class="toolbar">' +
       '<div class="search">'+ICON_SEARCH+'<label class="sr" for="q">חיפוש עבודות</label><input id="q" type="search" placeholder="חיפוש: גלים, אסוף נמוך, איפור טבעי…" value="'+esc(ui.q)+'" autocomplete="off"></div>' +
       '<div class="filters">' +
         (usedCats.length > 1 ? '<div class="chips" role="group" aria-label="סוג אירוע"><button class="chip" data-cat="all" aria-pressed="'+(ui.cat==='all')+'">הכל</button>' +
           usedCats.map(function(c){ return '<button class="chip" data-cat="'+c.id+'" aria-pressed="'+(ui.cat===c.id)+'">'+esc(c.name)+'</button>'; }).join('') + '</div>' : '') +
         (hasHair && hasMk ? '<div class="seg" role="group" aria-label="סוג עבודה">' + [['all','הכל'],['hair','תסרוקות'],['makeup','איפור']].map(function(p){ return '<button data-type="'+p[0]+'" aria-pressed="'+(ui.type===p[0])+'">'+p[1]+'</button>'; }).join('') + '</div>' : '') +
       '</div></div>' +
-      '<p class="count" id="count" aria-live="polite"></p><div class="grid" id="grid"></div></section>' +
+      '<p class="count" id="count" aria-live="polite"></p><div class="grid" id="grid"></div></section></main>' +
     '<footer class="foot"><div>' + (s.logo ? '<img class="foot-logo" src="'+esc(src(s.logo))+'" alt="">' : '') + '<strong>'+esc(s.name)+'</strong><div>'+esc(s.tagline)+'</div></div>' +
-      '<div>' + (s.phone ? '<div>'+esc(s.phone)+'</div>' : '') + (s.instagram ? '<a href="'+esc(s.instagram)+'" target="_blank" rel="noopener">אינסטגרם</a>' : '') + '</div></footer></div>' +
+      '<div>' + (s.phone ? '<div>'+esc(s.phone)+'</div>' : '') + (s.instagram ? '<a href="'+esc(s.instagram)+'" target="_blank" rel="noopener">אינסטגרם</a>' : '') + '</div>' +
+      '<div class="legal"><button class="linkbtn" data-act="show-a11y">הצהרת נגישות</button><button class="linkbtn" data-act="show-privacy">מדיניות פרטיות</button></div></footer></div>' +
+  '<button class="a11y-btn" data-act="a11y-open" aria-label="הגדרות נגישות" aria-expanded="false"><svg viewBox="0 0 24 24" aria-hidden="true" fill="currentColor"><path d="M12 2a2 2 0 1 1 0 4 2 2 0 0 1 0-4zm9 7h-6v13h-2v-6h-2v6H9V9H3V7h18v2z"/></svg></button>' +
   (wa ? '<a class="wa-float" href="'+esc(wa)+'" target="_blank" rel="noopener" aria-label="שליחת הודעה בוואטסאפ">'+ICON_CHAT+'</a>' : '');
   renderGrid(); renderOwnerChrome();
 }
@@ -451,7 +647,7 @@ function renderGrid(){
   if (!list.length){ grid.style.columns = 'auto'; grid.innerHTML = '<div class="empty-state">לא נמצאו עבודות שמתאימות לחיפוש.<br><button class="btn sec" data-act="clear">ניקוי החיפוש</button></div>'; return; }
   grid.style.columns = '';
   grid.innerHTML = list.map(function(w){
-    return '<button class="card" data-open="'+w.id+'"><div class="ph"><img src="'+esc(src(w.images[0].thumb))+'" alt="'+esc(w.title)+'" loading="lazy">' +
+    return '<button class="card" data-open="'+w.id+'"><div class="ph"><img src="'+esc(src(w.images[0].thumb))+'" alt="'+esc(altText(w))+'" loading="lazy">' +
       (w.images.length > 1 ? '<span class="multi">'+w.images.length+' תמונות</span>' : '') + '</div>' +
       '<div class="cap"><div class="t">'+esc(w.title || TYPE_LABEL[w.type])+'</div><div class="c">'+esc([catName(w.cat), TYPE_LABEL[w.type]].filter(Boolean).join(' / '))+'</div></div></button>';
   }).join('');
@@ -470,7 +666,7 @@ function renderLB(){
   var n = w.images.length, wa = waLink('היי, ראיתי בגלריה את „' + (w.title || TYPE_LABEL[w.type]) + '” ואשמח לפרטים');
   box.hidden = false; document.body.style.overflow = 'hidden';
   box.innerHTML = '<div class="lb" role="dialog" aria-modal="true" aria-label="'+esc(w.title||'עבודה')+'"><div class="lb-stage" id="lbstage"><button class="lb-close" data-act="lb-close" aria-label="סגירה">×</button>' +
-      '<img src="'+esc(src(w.images[lb.img].full))+'" alt="'+esc(w.title)+'">' +
+      '<img src="'+esc(src(w.images[lb.img].full))+'" alt="'+esc(altText(w) + (n > 1 ? ', תמונה ' + (lb.img+1) + ' מתוך ' + n : ''))+'">' +
       (n > 1 ? '<button class="lb-arrow prev" data-act="img-prev" aria-label="התמונה הקודמת">›</button><button class="lb-arrow next" data-act="img-next" aria-label="התמונה הבאה">‹</button><div class="dots">' + w.images.map(function(_,i){return '<span class="'+(i===lb.img?'on':'')+'"></span>';}).join('') + '</div>' : '') +
     '</div><div class="lb-info"><div class="meta">'+esc([catName(w.cat), TYPE_LABEL[w.type]].filter(Boolean).join(' / '))+'</div>' +
       '<h2>'+esc(w.title || TYPE_LABEL[w.type])+'</h2>' + (w.desc ? '<p>'+esc(w.desc)+'</p>' : '') +
@@ -521,13 +717,13 @@ function renderEditor(){
   if (!ed.open){ box.innerHTML = ''; box.hidden = true; if (!lb.open) document.body.style.overflow = ''; return; }
   box.hidden = false; document.body.style.overflow = 'hidden';
   var title = ed.login ? 'התחברות לעריכה' : ed.form ? (ed.form.isNew ? 'עבודה חדשה' : 'עריכת עבודה') : 'עריכת הגלריה';
-  var body = ed.login ? loginForm() : ed.form ? workForm() : ed.tab === 'works' ? worksTab() : ed.tab === 'cats' ? catsTab() : siteTab();
+  var body = ed.login ? loginForm() : ed.form ? workForm() : ed.tab === 'works' ? worksTab() : ed.tab === 'cats' ? catsTab() : ed.tab === 'design' ? designTab() : siteTab();
   var foot = ed.login ? '<span class="meter"></span><button class="btn" data-act="login">התחברות</button>'
     : ed.form ? '<span class="meter"></span><button class="btn sec" data-act="form-cancel">ביטול</button><button class="btn" data-act="form-save">שמירת העבודה</button>'
     : '<span class="meter">'+(dirty ? 'יש שינויים שעדיין לא באתר' : 'כל השינויים באתר')+'</span><button class="btn" data-act="publish"'+(dirty?'':' disabled')+'>'+(dirty?'פרסום השינויים':'הכל מפורסם')+'</button>';
   box.innerHTML = '<div class="ed-back" data-act="close-editor"></div><aside class="ed" role="dialog" aria-modal="true" aria-label="'+title+'">' +
     '<div class="ed-head"><h2>'+title+'</h2><button class="ed-x" data-act="close-editor" aria-label="סגירה">×</button></div>' +
-    (ed.login || ed.form ? '' : '<div class="ed-tabs" role="tablist">' + [['works','עבודות'],['cats','קטגוריות'],['site','פרטי העסק']].map(function(t){ return '<button role="tab" data-tab="'+t[0]+'" aria-selected="'+(ed.tab===t[0])+'">'+t[1]+'</button>'; }).join('') + '</div>') +
+    (ed.login || ed.form ? '' : '<div class="ed-tabs" role="tablist">' + [['works','עבודות'],['cats','קטגוריות'],['design','עיצוב'],['site','פרטי העסק']].map(function(t){ return '<button role="tab" data-tab="'+t[0]+'" aria-selected="'+(ed.tab===t[0])+'">'+t[1]+'</button>'; }).join('') + '</div>') +
     '<div class="ed-body">'+body+'</div><div class="ed-foot">'+foot+'</div></aside>';
   bindEditorInputs(box);
 }
@@ -552,6 +748,7 @@ function worksTab(){
     '<label class="sr" for="bulk-cat">קטגוריה</label><select id="bulk-cat" data-bulk="bulkCat">' + (ai ? '<option value="'+AUTO+'"'+(ed.bulkCat===AUTO?' selected':'')+'>זיהוי אוטומטי</option>' : '') + '<option value=""'+(ed.bulkCat===''?' selected':'')+'>ללא קטגוריה</option>' + draft.categories.map(function(c){return '<option value="'+c.id+'"'+(ed.bulkCat===c.id?' selected':'')+'>'+esc(c.name)+'</option>';}).join('') + '</select>' +
     '<label class="sr" for="bulk-type">סוג העבודה</label><select id="bulk-type" data-bulk="bulkType">' + (ai ? '<option value="'+AUTO+'"'+(ed.bulkType===AUTO?' selected':'')+'>זיהוי אוטומטי</option>' : '') + ['hair','makeup','both'].map(function(t){return '<option value="'+t+'"'+(ed.bulkType===t?' selected':'')+'>'+TYPE_LABEL[t]+'</option>';}).join('') + '</select>' +
     '<label class="btn sec" style="cursor:pointer">בחירת תמונות<input type="file" accept="image/*" multiple id="bulkfile" style="display:none"></label></div>' +
+    '<p class="consent">מעלים רק תמונות שהמצולמת הסכימה לפרסומן, ובקטינות, בהסכמת הורה.</p>' +
     '<label class="check" style="margin:10px 0 0"><input type="checkbox" id="bulkhide"'+(ed.bulkHide?' checked':'')+'>להציג ללקוחות רק אחרי שאאשר</label>' +
     '<p class="hint" style="margin:8px 0 0">' + (ai ? 'כל תמונה הופכת לעבודה נפרדת. בזיהוי אוטומטי, Claude מציע לכל עבודה קטגוריה, סוג, שם ומילות חיפוש, ואפשר לתקן אחר כך.' : 'כל תמונה הופכת לעבודה נפרדת. זיהוי אוטומטי של קטגוריה ושם אפשר להפעיל בלשונית „פרטי העסק”.') + '</p></div>';
   var rv = draft.works.filter(function(w){ return w.review; }).length;
@@ -575,6 +772,36 @@ function catsTab(){
         '<button class="ic" data-act="c-del" data-id="'+c.id+'" style="color:#B3261E">'+delLabel('c-del'+c.id,'מחיקה')+'</button></li>';
     }).join('') + '</ul><div class="cat-add"><label class="sr" for="newcat">קטגוריה חדשה</label><input id="newcat" placeholder="קטגוריה חדשה"><button class="btn sec" data-act="c-add">הוספה</button></div>';
 }
+function designTab(){
+  var t = draft.theme, L = lightVars(t), warn = themeWarnings(t);
+  function radios(k, label, opts){
+    return '<div class="field"><span class="lbl">'+label+'</span><div class="radios">' + opts.map(function(o){
+      return '<label><input type="radio" name="th-'+k+'" data-theme-opt="'+k+'" value="'+o[0]+'"'+(t[k]===o[0]?' checked':'')+'>'+o[1]+'</label>'; }).join('') + '</div></div>';
+  }
+  function color(k, label){
+    return '<div class="color-row"><label for="th-'+k+'">'+label+'</label><input type="color" id="th-'+k+'" data-theme-color="'+k+'" value="'+L[k]+'">' +
+      (t[k] ? '<button class="ic" data-act="th-clear" data-k="'+k+'">חזרה לצבע של הסגנון</button>' : '<span class="hint" style="margin:0">לפי הסגנון</span>') + '</div>';
+  }
+  function fontSel(k, label, list, sample){
+    return '<div class="field"><label for="th-'+k+'">'+label+'</label><select id="th-'+k+'" data-theme-opt="'+k+'">' +
+      list.map(function(f){ return '<option value="'+f+'"'+(t[k]===f?' selected':'')+'>'+f+'</option>'; }).join('') + '</select>' +
+      '<div class="font-sample" style="font-family:\''+t[k]+'\',serif'+(k==='display'?';font-size:28px':'')+'">'+sample+'</div></div>';
+  }
+  return '<p class="hint" style="margin-top:0">השינויים מופיעים מיד בגלריה שמאחורי החלון. סוגרים את החלון כדי לראות את התוצאה, ו„פרסום השינויים” מעדכן את האתר ללקוחות.</p>' +
+    '<div class="field"><span class="lbl">סגנון צבעים</span><div class="presets">' + Object.keys(PRESETS).map(function(k){
+      var p = PRESETS[k].light;
+      return '<button class="preset" data-act="th-preset" data-k="'+k+'" aria-pressed="'+(t.preset===k)+'"><span class="dots"><i style="background:'+p.bg+'"></i><i style="background:'+p.accent+'"></i><i style="background:'+p.ink+'"></i></span>'+PRESETS[k].name+'</button>';
+    }).join('') + '</div></div>' +
+    '<div class="field"><span class="lbl">צבעים מותאמים אישית</span>' + color('accent','צבע הדגשה') + color('bg','צבע רקע') + color('ink','צבע טקסט') +
+      '<span class="hint" style="margin:0">הצבעים המותאמים חלים על התצוגה הבהירה. בתצוגה הכהה נשארים צבעי הסגנון.</span></div>' +
+    (warn.length ? '<div class="warn" role="alert"><strong>שימו לב לקריאות:</strong><ul>' + warn.map(function(w){ return '<li>'+w+'</li>'; }).join('') + '</ul>ניגודיות נמוכה פוגעת בנגישות האתר.</div>' : '') +
+    fontSel('display','גופן כותרות', DISPLAY_FONTS, esc(draft.site.name)) + fontSel('body','גופן טקסט', BODY_FONTS, 'תסרוקות ערב ואיפור לנשים ולנערות') +
+    radios('frame','צורת החלונות בראש העמוד', [['arch','קשתות'],['circle','עיגולים'],['soft','מלבנים מעוגלים']]) +
+    radios('corners','פינות התמונות', [['round','מעוגלות'],['sharp','ישרות']]) +
+    radios('cols','תמונות בשורה בטלפון', [['2','שתיים'],['1','אחת, גדולה']]) +
+    radios('mode','תצוגה בהירה או כהה', [['auto','לפי הגדרת הטלפון'],['light','תמיד בהירה'],['dark','תמיד כהה']]) +
+    '<button class="btn danger" data-act="th-reset">'+(ed.pending==='th-reset'?'לחיצה נוספת לאיפוס':'חזרה לעיצוב המקורי')+'</button>';
+}
 function siteTab(){
   var s = draft.site;
   function f(k, label, type, ph, hint){
@@ -586,6 +813,10 @@ function siteTab(){
     (s.logo ? '<label class="check"><input type="checkbox" id="showname"'+(s.showName?' checked':'')+'>להציג גם את שם העסק מתחת ללוגו</label>' : '') +
     f('name','שם העסק','text') + f('tagline','שורת תיאור קצרה','text') + f('about','כמה מילים עליי','area','למשל: שנות ניסיון, אזור עבודה, הגעה עד הבית') +
     f('phone','מספר וואטסאפ עסקי','tel','050-0000000','ממנו נבנים כל כפתורי „שליחת הודעה” בגלריה.') + f('waMessage','ההודעה שתיפתח ללקוחה בוואטסאפ','text') + f('instagram','קישור לאינסטגרם (לא חובה)','url','https://instagram.com/...') +
+    '<hr style="border:0;border-top:1px solid var(--line);margin:22px 0"><div class="field"><span class="lbl">הצהרת נגישות</span>' +
+      '<span class="hint" style="margin:0 0 10px">פרטי רכז/ת הנגישות מופיעים בהצהרת הנגישות שבתחתית האתר. אם לא ממלאים טלפון, יוצג טלפון העסק.</span></div>' +
+    f('a11yName','שם רכז/ת הנגישות','text') + f('a11yPhone','טלפון לפניות נגישות','tel') + f('a11yEmail','דוא"ל לפניות נגישות','email') +
+    '<button class="ic" data-act="show-a11y" style="margin-bottom:6px">תצוגה של הצהרת הנגישות</button> <button class="ic" data-act="show-privacy">תצוגה של מדיניות הפרטיות</button>' +
     '<hr style="border:0;border-top:1px solid var(--line);margin:22px 0">' +
     '<div class="field"><span class="lbl">זיהוי אוטומטי של עבודות</span>' +
       (aiKey() ? '<p class="hint" style="margin:0 0 8px">מופעל במכשיר הזה. בהעלאה מהירה, Claude מציע לכל תמונה קטגוריה, סוג, שם ומילות חיפוש.</p><div><button class="ic" data-act="ai-off">'+(ed.pending==='ai-off'?'לחיצה נוספת לכיבוי':'כיבוי במכשיר הזה')+'</button></div>'
@@ -619,6 +850,11 @@ function bindEditorInputs(box){
     el.addEventListener(el.type === 'checkbox' || el.type === 'radio' || el.tagName === 'SELECT' ? 'change' : 'input', function(){ ed.form[el.dataset.form] = el.type === 'checkbox' ? el.checked : el.value; });
   });
   box.querySelectorAll('[data-bulk]').forEach(function(el){ el.addEventListener('change', function(){ ed[el.dataset.bulk] = el.value; }); });
+  box.querySelectorAll('[data-theme-opt]').forEach(function(el){ el.addEventListener('change', function(){ draft.theme[el.dataset.themeOpt] = el.value; markDirty(); }); });
+  box.querySelectorAll('[data-theme-color]').forEach(function(el){
+    el.addEventListener('input', function(){ draft.theme[el.dataset.themeColor] = el.value; applyTheme(draft.theme); });
+    el.addEventListener('change', function(){ draft.theme[el.dataset.themeColor] = el.value; markDirty(); });
+  });
   var bh = box.querySelector('#bulkhide'); if (bh) bh.addEventListener('change', function(){ ed.bulkHide = bh.checked; });
   var ak = box.querySelector('#ai-key-save'); if (ak) ak.addEventListener('click', function(){ var v = box.querySelector('#ai-key').value.trim(); if (!v) return; try{ localStorage.setItem(AI_KEY, v); }catch(e){} ed.bulkCat = AUTO; ed.bulkType = AUTO; renderEditor(); toast('הזיהוי האוטומטי מופעל במכשיר הזה.'); });
   var bf = box.querySelector('#bulkfile'); if (bf) bf.addEventListener('change', function(){ bulkAdd(bf.files); });
@@ -736,7 +972,7 @@ function publish(){
     busy.textContent = 'שומר…';
     var before = imagePaths(saved), after = imagePaths(state);
     Object.keys(before).forEach(function(p){ if (!after[p] && p.indexOf('images/') === 0) tree.push({path:p, mode:'100644', type:'blob', sha:null}); });
-    state.v = 2;
+    state.v = 2; state.site.a11yDate = today();
     var text = JSON.stringify(state);
     tree.push({path:'data.json', mode:'100644', type:'blob', content:text});
     state._text = text;
@@ -764,14 +1000,16 @@ function publish(){
 
 /* ---------- events ---------- */
 document.addEventListener('click', function(e){
-  var t = e.target.closest('[data-open],[data-cat],[data-type],[data-tag],[data-act],[data-tab]'); if (!t) return;
+  var t = e.target.closest('[data-open],[data-cat],[data-type],[data-tag],[data-act],[data-tab],[data-a11y]'); if (!t) return;
+  if (t.dataset.a11y){ a11y[t.dataset.a11y] = !a11y[t.dataset.a11y]; applyA11y(); refreshA11y(); return; }
+  if (a11yOpen && !t.closest('#a11y-panel') && t.dataset.act !== 'a11y-open') closeA11y();
   if (t.dataset.open){ openLB(t.dataset.open, t); return; }
   if (t.dataset.cat){ ui.cat = t.dataset.cat; document.querySelectorAll('[data-cat]').forEach(function(b){ b.setAttribute('aria-pressed', b.dataset.cat === ui.cat); }); renderGrid(); return; }
   if (t.dataset.type){ ui.type = t.dataset.type; document.querySelectorAll('[data-type]').forEach(function(b){ b.setAttribute('aria-pressed', b.dataset.type === ui.type); }); renderGrid(); return; }
   if (t.dataset.tag){ ui.q = t.dataset.tag; ui.cat = 'all'; ui.type = 'all'; closeLB(); render(); var g = document.getElementById('works'); if (g) g.scrollIntoView(); return; }
   if (t.dataset.tab){ ed.tab = t.dataset.tab; ed.pending = null; renderEditor(); return; }
   var a = t.dataset.act, id = t.dataset.id, w = id && draft.works.filter(function(x){return x.id===id;})[0];
-  if (ed.pending && a !== 'w-del' && a !== 'c-del' && a !== 'close-editor' && a !== 'logout' && a !== 'approve-all' && a !== 'ai-off'){ ed.pending = null; if (ed.open) renderEditor(); }
+  if (ed.pending && a !== 'w-del' && a !== 'c-del' && a !== 'close-editor' && a !== 'logout' && a !== 'approve-all' && a !== 'ai-off' && a !== 'th-reset'){ ed.pending = null; if (ed.open) renderEditor(); }
   switch (a){
     case 'clear': ui = {q:'', cat:'all', type:'all'}; render(); break;
     case 'lb-close': closeLB(); break;
@@ -799,6 +1037,17 @@ document.addEventListener('click', function(e){
       if (!needConfirm('c-del'+id, n ? 'לחיצה נוספת תמחק את הקטגוריה. ' + plural(n) + ' יישארו בלי קטגוריה.' : 'לחיצה נוספת תמחק את הקטגוריה.')) return;
       draft.categories = draft.categories.filter(function(c){return c.id!==id;}); draft.works.forEach(function(x){ if (x.cat===id) x.cat=''; }); markDirty(); break;
     case 'logo-del': draft.site.logo = ''; markDirty(); break;
+    case 'th-preset': draft.theme.preset = t.dataset.k; draft.theme.accent = draft.theme.bg = draft.theme.ink = ''; markDirty(); break;
+    case 'th-clear': draft.theme[t.dataset.k] = ''; markDirty(); break;
+    case 'th-reset': if (!needConfirm('th-reset')) return; draft.theme = clone(DEFAULT_THEME); markDirty(); break;
+    case 'show-a11y': doc.ret = t; doc.open = 'a11y'; closeA11y(); renderDoc(); break;
+    case 'show-privacy': doc.ret = t; doc.open = 'privacy'; renderDoc(); break;
+    case 'doc-close': doc.open = null; renderDoc(); break;
+    case 'a11y-open': toggleA11y(); break;
+    case 'a11y-close': closeA11y(); break;
+    case 'a11y-bigger': a11y.size = Math.min(3, (a11y.size||0) + 1); applyA11y(); refreshA11y(); break;
+    case 'a11y-smaller': a11y.size = Math.max(0, (a11y.size||0) - 1); applyA11y(); refreshA11y(); break;
+    case 'a11y-reset': a11y = {}; applyA11y(); refreshA11y(); break;
     case 'w-ok': if (w){ w.review = false; w.visible = true; markDirty(); } break;
     case 'review-only': ed.reviewOnly = !ed.reviewOnly; renderEditor(); break;
     case 'approve-all': if (!needConfirm('approve-all', 'לחיצה נוספת תאשר את כל העבודות שזוהו ותציג אותן ללקוחות.')) return; draft.works.forEach(function(x){ if (x.review){ x.review = false; x.visible = true; } }); ed.reviewOnly = false; markDirty(); break;
@@ -817,6 +1066,9 @@ document.addEventListener('click', function(e){
 });
 document.addEventListener('input', function(e){ if (e.target.id === 'q'){ ui.q = e.target.value; renderGrid(); } });
 document.addEventListener('keydown', function(e){
+  if (e.key === 'Tab') trapFocus(e);
+  if (e.key === 'Escape' && doc.open){ doc.open = null; renderDoc(); return; }
+  if (e.key === 'Escape' && a11yOpen){ closeA11y(); return; }
   if (lb.open){ if (e.key === 'Escape') closeLB(); else if (e.key === 'ArrowLeft') stepImg(1, true); else if (e.key === 'ArrowRight') stepImg(-1, true); }
   else if (ed.open && e.key === 'Escape'){ if (ed.form){ ed.form = null; renderEditor(); } else closeEditor(); }
 });
@@ -824,10 +1076,12 @@ window.addEventListener('beforeunload', function(e){ if (dirty){ e.preventDefaul
 
 /* ---------- boot ---------- */
 document.body.insertAdjacentHTML('beforeend',
-  '<div id="lightbox" hidden></div><div id="editor" hidden></div>' +
+  '<div id="lightbox" hidden></div><div id="editor" hidden></div><div id="docbox" hidden></div><div id="a11ybox"></div>' +
   '<button class="admin-pill" id="admin-pill" data-act="open-editor" hidden>עריכת הגלריה</button>' +
   '<div class="draft-bar" id="draft-bar" hidden><span>יש שינויים שעדיין לא באתר</span><button data-act="publish">פרסום השינויים</button></div>' +
   '<div class="toast" id="toast" role="status"></div>');
+applyA11y();
+applyTheme(DEFAULT_THEME);
 render();
 if (cfg && cfg.token){
   loadFromGitHub().then(render, function(e){
